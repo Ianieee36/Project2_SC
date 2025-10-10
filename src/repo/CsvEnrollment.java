@@ -32,8 +32,8 @@ public final class CsvEnrollment implements Enrollmentrepo{
     }
     
     @Override
-    public void drop(String sid, String code) {
-        svc.dropCourse(sid, code);
+    public void drop(String studentId, String courseCode) {
+        svc.dropCourse(studentId, courseCode);
     }
     
     @Override public List<Course> listFor(String sid) {
