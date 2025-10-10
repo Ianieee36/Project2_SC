@@ -59,7 +59,7 @@ public class CourseFiles {
         }
     }
     
-    // NEW: persist current state to disk (atomioc, best-effort)
+    // NEW: persist current state to disk (atomic, best-effort)
     private void persist() {
         if(!autoSave) return;
         synchronized(ioLock) {
