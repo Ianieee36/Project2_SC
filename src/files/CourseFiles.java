@@ -103,19 +103,14 @@ public class CourseFiles {
     
     public void dropCourse(String studentId, String courseCode) {
         Student s = requireStudent(studentId);
-        Course c = requireCourse(courseCode);
-        if(!s.hasCourse(c.getCode())) {
-            throw new IllegalArgumentException("Student not enrolled in " + c.getCode());
-        }
+        String code = normalizedCode(courseCode);
         
-        Iterator<Course> it = s.getEnrolledCourses().iterator();
-        while(it.hasNext()) {
-            if (normalizedCode(it.next().getCode()).equals(normalizedCode(courseCode))) {
-                it.remove();
-                break;
-            }
+        // This makes the students mutate its own list
+        boolean removed = s.dropCoursesByCode(courseCode);
+        if(!removed) {
+            throw new IllegalArgumentException("Student not enrolled in " + courseCode);
         }
-        persist();
+        persist(); // keep autosave
     }
     
     public List<Course> displayCourses(String studentId) {
