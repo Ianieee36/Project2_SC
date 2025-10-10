@@ -1,0 +1,69 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package service;
+
+import model.Course;
+import model.Student;
+import repo.Courserepo;
+import repo.Studentrepo;
+import repo.Enrollmentrepo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author christian
+ */
+
+public class EnrollmentService {
+    
+    private final Studentrepo students;
+    private final Courserepo courses;
+    private final Enrollmentrepo enrollments;
+    private int maxCredits = 60;
+    
+    public EnrollmentService(Studentrepo s, Courserepo c, Enrollmentrepo e) {
+        this.students = s;
+        this.courses = c;
+        this.enrollments = e;
+    }
+    
+    public void setMaxCredits(int pts) {
+        this.maxCredits = pts;
+    }
+    
+    public List<String> validate(String sid, String code) {
+        List<String> errs = new ArrayList<>();
+        Student s = students.find(sid);
+        Course  c = courses.find(code);
+        if(s == null) errs.add("Unknown student: " + sid);
+        if(c == null) errs.add("Unknown course: " + code);
+        if(!errs.isEmpty()) return errs;
+        
+        if(enrollments.isEnrolled(sid, code)) errs.add("Already enrolled");
+        int projected = s.getTotalCredits() + c.getCreditPoints();
+        if(projected > maxCredits) errs.add("Credit limit exceeded: " + projected + " > " + maxCredits);
+        
+        return errs;
+        
+    }
+    
+    public void enroll(String sid, String code) {
+        List<String> errs = validate(sid, code);
+        if(!errs.isEmpty()) throw new IllegalArgumentException(String.join("; ", errs));
+        enrollments.add(sid, code);
+    }
+    
+    public void drop(String sid, String code) {
+        if(!enrollments.isEnrolled(sid, code)) 
+            throw new IllegalArgumentException(String.join(", ", code));
+        enrollments.drop(sid, code);
+    }
+    
+    public List<Course> list(String sid) {
+        return enrollments.listFor(sid);
+    }
+}
