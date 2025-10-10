@@ -5,16 +5,15 @@
 package repo;
 
 import files.CourseFiles;
-import model.Student;
 import model.Course;
-import repo.Enrollment;
 
 import java.util.List;
+
 /**
  *
  * @author christian
  */
-public final class CsvEnrollment implements Enrollment{
+public final class CsvEnrollment implements Enrollmentrepo{
     
     private final CourseFiles svc;
     

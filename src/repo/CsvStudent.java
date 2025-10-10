@@ -8,7 +8,7 @@ package repo;
  *
  * @author christian
  */
-public final class CsvStudent implements Student {
+public final class CsvStudent implements Studentrepo {
     
     private final files.CourseFiles svc;
     
@@ -16,10 +16,12 @@ public final class CsvStudent implements Student {
         this.svc = svc;
     }
     
+    @Override
     public void add(model.Student s) {
         svc.addStudent(s);
     }
     
+    @Override
     public model.Student find(String id) {
         return svc.allStudents().stream().filter(st->st.getId().equals(id)).findFirst().orElse(null);
     }

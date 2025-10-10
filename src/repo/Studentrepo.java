@@ -8,9 +8,7 @@ package repo;
  *
  * @author christian
  */
-public interface Enrollment {
-    boolean isEnrolled(String sid, String code);
-    void add(String sid, String code);
-    void drop(String sid, String code);
-    java.util.List<model.Course> listFor(String sid);
+public interface Studentrepo {
+    void add(model.Student s);
+    model.Student find(String id);
 }
