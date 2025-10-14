@@ -4,9 +4,19 @@
  */
 package CUI_main;
 
+import files.CourseFiles;
 import model.Course;
 import model.Student;
-import files.CourseFiles;
+
+import repo.StudentRepo;
+import repo.CourseRepo;
+import repo.EnrollmentRepo;
+
+import repo.CsvStudent;
+import repo.CsvCourse;
+import repo.CsvEnrollment;
+
+import service.EnrollmentService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -18,10 +28,23 @@ import java.util.Scanner;
 public class AUTCourseSelectionSystem {
 
     private static final Scanner in = new Scanner(System.in);
-    // Auto-loads from ./data and auto-saves after each change
-    private static final CourseFiles svc = new CourseFiles();
+    
+    // Repos + Service available to menu handlers
+    private static StudentRepo studentRepo;
+    private static CourseRepo courseRepo;
+    private static EnrollmentService svc;
     
     public static void main(String[] args) {
+        
+        // I Wired CSV backend; CourseFiles that handles autosave/autoload
+        CourseFiles filesSvc = new CourseFiles();
+        
+        studentRepo = new CsvStudent(filesSvc);
+        courseRepo = new CsvCourse(filesSvc);
+        EnrollmentRepo enrollRepo = new CsvEnrollment(filesSvc);
+        svc = new EnrollmentService(studentRepo, courseRepo, enrollRepo);
+        svc.setMaxCredits(60);
+        
         System.out.println("=== AUCKLAND UNIVERSITY OF TECHNOLOGY ===");
         while (true) {
             try {
@@ -46,7 +69,7 @@ public class AUTCourseSelectionSystem {
     private static void addStudent() {
         String id = readNonBlank("Student ID: ");
         String name = readNonBlank("Student Name: ");
-        svc.addStudent(new Student(id, name, null));
+        studentRepo.add(new Student(id, name, null));
         System.out.println(name + " Your Student ID is: " + id);
     }
     
@@ -56,34 +79,38 @@ public class AUTCourseSelectionSystem {
         int credits = readPositiveInt("Credit Points: ");
         String level = readNonBlank("Level (UG/PG): ").toUpperCase();
         
-        Course c;
-        switch (level) {
-            case "PG": c = new model.PostgraduateCourse(code, title, credits); break;
-            case "UG": c = new model.UndergraduateCourse(code, title, credits); break;
-            default:       throw new IllegalArgumentException("Invalid: choose either UG/PG");
-        }
+        Course c = switch (level) {
+            case "PG" -> new model.PostgraduateCourse(code, title, credits);
+            case "UG" -> new model.UndergraduateCourse(code, title, credits);
+            default   -> throw new IllegalArgumentException("Invalid: choose either UG/PG");
+        };
         
-        svc.addCourse(c);
+        courseRepo.add(c);
         System.out.println("Added course: " + code.toUpperCase() + " [" + level + "]");
     }
     
     private static void enroll() {
         String sid = readNonBlank("Student ID: ");
         String code = readNonBlank("Course code: ");
-        svc.enrollingCourse(sid, code);
-        System.out.println("You've been successfully been enrolled in " + code);
+        var errs = svc.validate(sid, code);
+        if(!errs.isEmpty()) {
+            System.out.println("Cannot enroll: " + String.join("; ", errs));
+            return;
+        }
+        svc.enroll(sid, code);
+        System.out.println("Enrolled in " + code.toUpperCase());
     }
     
     private static void drop() {
         String sid = readNonBlank("Student ID: ");
         String code = readNonBlank("Course code: ");
-        svc.dropCourse(sid, code);
-        System.out.println("Student is officially been dropped.");
+        svc.drop(sid, code);
+        System.out.println("Student officially drop from " + code.toUpperCase());
     }
     
     private static void listStudentCourses() {
         String sid = readNonBlank("Student ID: ");
-        List<Course> courses = svc.displayCourses(sid);
+        List<Course> courses = svc.list(sid);
         if(courses.isEmpty()) {
             System.out.println("No courses enrolled.");
             return;
@@ -109,6 +136,8 @@ public class AUTCourseSelectionSystem {
                            
             """);
     }
+    
+    // small input helpers
     
     private static String readNonBlank(String prompt) {
         while (true) {
