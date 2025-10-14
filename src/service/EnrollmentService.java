@@ -36,19 +36,29 @@ public class EnrollmentService {
     }
     
     public List<String> validate(String sid, String code) {
+        
         List<String> errs = new ArrayList<>();
+        
         Student s = students.find(sid);
-        Course  c = courses.find(code);
         if(s == null) errs.add("Unknown student: " + sid);
+        
+        Course  c = courses.find(code);
         if(c == null) errs.add("Unknown course: " + code);
         if(!errs.isEmpty()) return errs;
         
-        if(enrollments.isEnrolled(sid, code)) errs.add("Already enrolled");
-        int projected = s.getTotalCredits() + c.getCreditPoints();
-        if(projected > maxCredits) errs.add("Credit limit exceeded: " + projected + " > " + maxCredits);
+        if(enrollments.isEnrolled(sid, code)) {
+            errs.add("Already enrolled");
+            return errs;
+        }
         
+        int current = enrollments.listFor(sid).stream()
+                .mapToInt(Course::getCreditPoints).sum();
+        
+        int projected = current + c.getCreditPoints();
+        if(projected > maxCredits) {
+            errs.add("Credit limit exceeded: " + projected + " > " + maxCredits);
+        }
         return errs;
-        
     }
     
     public void enroll(String sid, String code) {
