@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author christian
  */
-public interface Courserepo {
+public interface CourseRepo {
     void add(model.Course c);
     model.Course find(String code);
     List<Course> search(String query);

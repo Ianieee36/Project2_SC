@@ -6,12 +6,12 @@ package service;
 
 import model.Course;
 import model.Student;
-import repo.Courserepo;
-import repo.Studentrepo;
-import repo.Enrollmentrepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import repo.CourseRepo;
+import repo.EnrollmentRepo;
+import repo.StudentRepo;
 
 /**
  *
@@ -20,12 +20,12 @@ import java.util.List;
 
 public class EnrollmentService {
     
-    private final Studentrepo students;
-    private final Courserepo courses;
-    private final Enrollmentrepo enrollments;
+    private final StudentRepo students;
+    private final CourseRepo courses;
+    private final EnrollmentRepo enrollments;
     private int maxCredits = 60;
     
-    public EnrollmentService(Studentrepo s, Courserepo c, Enrollmentrepo e) {
+    public EnrollmentService(StudentRepo s, CourseRepo c, EnrollmentRepo e) {
         this.students = s;
         this.courses = c;
         this.enrollments = e;
@@ -63,7 +63,7 @@ public class EnrollmentService {
     
     public void enroll(String sid, String code) {
         List<String> errs = validate(sid, code);
-        if(!errs.isEmpty()) throw new IllegalArgumentException(String.join("; ", errs));
+        if(!errs.isEmpty()) throw new IllegalArgumentException("Not enrolled in " + code);
         enrollments.add(sid, code);
     }
     

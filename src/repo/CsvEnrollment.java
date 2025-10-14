@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author christian
  */
-public final class CsvEnrollment implements Enrollmentrepo{
+public final class CsvEnrollment implements EnrollmentRepo{
     
     private final CourseFiles svc;
     

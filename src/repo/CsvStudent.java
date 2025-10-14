@@ -8,7 +8,7 @@ package repo;
  *
  * @author christian
  */
-public final class CsvStudent implements Studentrepo {
+public final class CsvStudent implements StudentRepo {
     
     private final files.CourseFiles svc;
     

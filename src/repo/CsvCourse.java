@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author christian
  */
-public final class CsvCourse implements Courserepo {
+public final class CsvCourse implements CourseRepo {
     
     private final CourseFiles svc;
     

@@ -8,7 +8,7 @@ package repo;
  *
  * @author christian
  */
-public interface Studentrepo {
+public interface StudentRepo {
     void add(model.Student s);
     model.Student find(String id);
 }

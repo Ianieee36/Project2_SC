@@ -8,7 +8,7 @@ package repo;
  *
  * @author christian
  */
-public interface Enrollmentrepo {
+public interface EnrollmentRepo {
     boolean isEnrolled(String sid, String code);
     void add(String sid, String code);
     void drop(String sid, String code);
