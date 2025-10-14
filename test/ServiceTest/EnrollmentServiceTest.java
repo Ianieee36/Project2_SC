@@ -16,14 +16,14 @@ import org.junit.Test;
 
 
 
-import repo.Studentrepo;
-import repo.Courserepo;
-import repo.Enrollmentrepo;
 import service.EnrollmentService;
 
 import java.util.*;
 
 import static org.junit.Assert.*;
+import repo.CourseRepo;
+import repo.EnrollmentRepo;
+import repo.StudentRepo;
 
 
 
@@ -116,7 +116,7 @@ public class EnrollmentServiceTest {
      
     // In-memory fake repos 
     
-    static class InMemStudentrepo implements Studentrepo {
+    static class InMemStudentrepo implements StudentRepo {
         final Map<String, Student> m = new HashMap<>();
         @Override public Student find(String id) {
             return m.get(id);
@@ -126,7 +126,7 @@ public class EnrollmentServiceTest {
         }
     }
     
-    static class InMemCourserepo implements Courserepo {
+    static class InMemCourserepo implements CourseRepo {
         final Map<String, Course> m = new HashMap<>();
         @Override public Course find(String code) {
             return m.get(code == null ? null : code.toUpperCase()); 
@@ -141,10 +141,10 @@ public class EnrollmentServiceTest {
         }
     }
     
-    static class InMemEnrollmentrepo implements Enrollmentrepo {
+    static class InMemEnrollmentrepo implements EnrollmentRepo {
         final Map<String, Set<String>> data = new HashMap<>(); // sid set of course codes
-        final Courserepo courses;
-        InMemEnrollmentrepo(Courserepo courses) {
+        final CourseRepo courses;
+        InMemEnrollmentrepo(CourseRepo courses) {
             this.courses = courses;
         }
         
