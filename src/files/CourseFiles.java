@@ -153,7 +153,7 @@ public class CourseFiles {
         
         writeAtomic(folder.resolve("enrollment.csv"), bw -> {
             for (Student s : students.values()) {
-                for(Course c : courses.values()) {
+                for(Course c : s.getEnrolledCourses()) {
                     bw.write(escape(s.getId()) + "," + escape(c.getCode()));
                     bw.newLine();
                 }
