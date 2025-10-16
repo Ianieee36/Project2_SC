@@ -170,7 +170,6 @@ public class CourseSelectionView extends JFrame {
         wc.setHorizontalAlignment(JLabel.CENTER);
         
         var url = getClass().getResource("/icons/ktw.jpg");
-        System.out.println("Banner URL = " + url);
         
         ImageIcon banner = null;
         if(url != null) {
