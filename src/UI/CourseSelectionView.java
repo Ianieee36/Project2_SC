@@ -59,6 +59,10 @@ public class CourseSelectionView extends JFrame {
     private final JTable tblResults = new JTable(new DefaultTableModel(
             new Object[]{"Code", "Title", "Credits"}, 0));
     
+    // Tabs Cleared
+    private final JTabbedPane tabs = new JTabbedPane();
+    private int lastTab = 0;
+    
     
     
     public CourseSelectionView() {
@@ -68,7 +72,6 @@ public class CourseSelectionView extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         
-        JTabbedPane tabs = new JTabbedPane();
         ImageIcon homeTabIcon = loadIcon("/icons/aut.png", 20, 20);
         tabs.addTab("Home", homeTabIcon, buildHomePanel(), "w");
         tabs.setBackground(new Color(243,112,33));
@@ -79,6 +82,13 @@ public class CourseSelectionView extends JFrame {
         tabs.addTab("Search Courses", buildSearchPanel());
         setContentPane(tabs);
         tabs.setSelectedIndex(0);
+        
+        lastTab = tabs.getSelectedIndex();
+        
+        tabs.addChangeListener(e -> {
+            clearTab(lastTab);
+            lastTab = tabs.getSelectedIndex();
+        });
         
         // wiring of buttons to Listeners
         
@@ -269,5 +279,34 @@ public class CourseSelectionView extends JFrame {
         g.insets = new Insets(6,6,6,6);
         g.anchor = GridBagConstraints.WEST;
         return g;
+    }
+    
+    // Just a simple feature that clears text field whenever a user change tabs
+    private void clearTab(int idx) {
+        switch(idx) {
+            case 1 -> {
+                tfSid.setText("");
+                tfName.setText("");
+            }
+            case 2 -> {
+                tfCode.setText("");
+                tfTitle.setText("");
+                spCredits.setValue(15);
+                cbLevel.setSelectedIndex(0);
+            }
+            case 3 -> {
+                tfESid.setText("");
+                tfECid.setText("");
+            }
+            case 4 -> {
+                tfListSid.setText("");
+                taCourses.setText("");
+            }
+            case 5 -> {
+                tfQuery.setText("");
+                ((DefaultTableModel) tblResults.getModel()).setRowCount(0);
+            }
+            default -> {}
+        }        
     }
 }
