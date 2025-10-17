@@ -6,15 +6,15 @@ package GUI_main;
 
 import javax.swing.SwingUtilities;
 
-import files.CourseFiles;
-
 // Repositories and CSV
 import repo.StudentRepo;
 import repo.CourseRepo;
 import repo.EnrollmentRepo;
-import repo.CsvStudent;
-import repo.CsvCourse;
-import repo.CsvEnrollment;
+
+// Repositories for DB
+import repo.db.*;
+
+//
 
 import service.EnrollmentService;
 import UI.CourseSelectionView;
@@ -28,11 +28,11 @@ public class AUT {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Backend wiring (CSV Storage via CourseFiles with auto-load/save)
-            CourseFiles csv = new CourseFiles();
+            Schema.ensure();
             
-            StudentRepo sRepo = new CsvStudent(csv);
-            CourseRepo cRepo = new CsvCourse(csv);
-            EnrollmentRepo eRepo = new CsvEnrollment(csv);
+            StudentRepo sRepo = new StudentRepoDerby();
+            CourseRepo cRepo = new CourseRepoDerby();
+            EnrollmentRepo eRepo = new EnrollmentRepoDerby();
             
             EnrollmentService svc = new EnrollmentService(sRepo, cRepo, eRepo);
             svc.setMaxCredits(60);

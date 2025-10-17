@@ -31,8 +31,8 @@ public class EnrollmentService {
         this.enrollments = e;
     }
     
-    public void setMaxCredits(int pts) {
-        this.maxCredits = pts;
+    public void setMaxCredits(int maxCredits) {
+        this.maxCredits = maxCredits;
     }
     
     public List<String> validate(String sid, String code) {
