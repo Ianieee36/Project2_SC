@@ -74,6 +74,14 @@ public class EnrollmentService {
     }
     
     public List<Course> list(String sid) {
+        if(sid == null || sid.isBlank()) {
+            throw new IllegalArgumentException("Student ID required");
+        }
+        sid = sid.trim();
+        var s = students.find(sid);
+        if(s == null) {
+            throw new IllegalArgumentException("Student: " + sid + " not found");
+        }
         return enrollments.listFor(sid);
     }
 }
