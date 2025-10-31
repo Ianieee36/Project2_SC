@@ -5,7 +5,6 @@
 package controller;
 
 import ui.CourseSelectionView;
-import ui.CourseSelectionListener;
 
 import service.EnrollmentService;
 import repo.StudentRepo;
@@ -122,17 +121,17 @@ public class CourseSelectionController implements CourseSelectionListener {
         } catch(Exception ex) {
             view.showError("Not found " + ex.getMessage());
         }
-    }
+    } 
     
     @Override
     public void onSearchCourses(String query, String progFilter) {
         try {
-        List<Course> found = courses.search(query);
-        if (!"All".equalsIgnoreCase(progFilter)) {
-            found = found.stream()
-                    .filter(c -> ("PG".equalsIgnoreCase(progFilter) && c instanceof PostgraduateCourse)
-                              || ("UG".equalsIgnoreCase(progFilter) && !(c instanceof PostgraduateCourse)))
-                    .toList();
+            List<Course> found = courses.search(query);
+            if (!"All".equalsIgnoreCase(progFilter)) {
+                found = found.stream()
+                        .filter(c -> ("PG".equalsIgnoreCase(progFilter) && c instanceof PostgraduateCourse)
+                                  || ("UG".equalsIgnoreCase(progFilter) && !(c instanceof PostgraduateCourse)))
+                        .toList();
             }
             view.showSearchResults(found);
         } catch (Exception ex) {

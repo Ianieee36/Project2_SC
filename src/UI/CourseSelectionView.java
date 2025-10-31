@@ -5,6 +5,7 @@
 package ui;
 
 
+import controller.CourseSelectionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
