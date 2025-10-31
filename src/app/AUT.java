@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package GUI_main;
+package app;
 
+import ui.CourseSelectionView;
+import controller.CourseSelectionController;
 import javax.swing.SwingUtilities;
 
 // Repositories and CSV
@@ -17,8 +19,6 @@ import repo.db.*;
 //
 
 import service.EnrollmentService;
-import UI.CourseSelectionView;
-import Controller.CourseSelectionController;
 
 /**
  *
@@ -27,7 +27,9 @@ import Controller.CourseSelectionController;
 public class AUT {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // Backend wiring (CSV Storage via CourseFiles with auto-load/save)
+            // GUI uses the aut_DB
+            System.clearProperty("app.db.url");
+            
             Schema.ensure();
             
             StudentRepo sRepo = new StudentRepoDerby();
