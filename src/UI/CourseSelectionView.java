@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package UI;
+package ui;
 
 
 import javax.swing.*;
@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.EmptyBorder;
 import model.Course;
+import model.PostgraduateCourse;
+
 
 /**
  *
@@ -56,8 +58,14 @@ public class CourseSelectionView extends JFrame {
     // Search Tab
     private final JTextField tfQuery = new JTextField(20);
     private final JButton btnSearch = new JButton("Search");
+    JComboBox<String> progFilter = new JComboBox<>(new String[]{"All", "UG", "PG"});
     private final JTable tblResults = new JTable(new DefaultTableModel(
-            new Object[]{"Code", "Title", "Credits"}, 0));
+            new Object[]{"Code", "Title", "Credits", "Programme"}, 0) { // added a programme type 
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            });
     
     // Tabs Cleared
     private final JTabbedPane tabs = new JTabbedPane();
@@ -115,7 +123,8 @@ public class CourseSelectionView extends JFrame {
                 listeners.forEach(l -> l.onListCourses(tfListSid.getText().trim())));
         
         btnSearch.addActionListener(e -> 
-                listeners.forEach(l -> l.onSearchCourses(tfQuery.getText().trim())));
+                listeners.forEach(l -> l.onSearchCourses(tfQuery.getText().trim(),
+                                                        (String) progFilter.getSelectedItem())));
         
         taCourses.setEditable(false);
         tblResults.setFillsViewportHeight(true);
@@ -138,29 +147,40 @@ public class CourseSelectionView extends JFrame {
     
     public void showStudentCourses(String sid, List<Course> courses) {
         StringBuilder sb = new StringBuilder(sid).append(" Enrolled Courses").append(":\n");
+        
+        int total = 0; 
+        
         if(courses == null || courses.isEmpty()) sb.append("(none)\n");
         else {
             for(Course c : courses) {
                 sb.append(" - ").append(c.getCode())
                   .append(" | ").append(c.getTitle())
                   .append(" | ").append(c.getCreditPoints()).append(" pts\n");
+                
+                total += c.getCreditPoints();
             }
         }
+        
+        sb.append("\nTotal Credits: ").append(total).append(" pts");
+        
         taCourses.setText(sb.toString());
     }
     
     public void showSearchResults(List<Course> courses) {
         DefaultTableModel m = (DefaultTableModel) tblResults.getModel();
         m.setRowCount(0);
+        
         if(courses != null) {
             for(Course c : courses) {
-                m.addRow(new Object[]{c.getCode(), c.getTitle(), c.getCreditPoints()});
+                String prog = (c instanceof PostgraduateCourse) ? "PG" : "UG"; // just added a new column for a programme type
+                m.addRow(new Object[]{c.getCode(), c.getTitle(), c.getCreditPoints(), prog});
             }
         }
     }
     
     // Panels
     
+    // Design panel for home tab
     private JComponent buildHomePanel() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -208,6 +228,8 @@ public class CourseSelectionView extends JFrame {
         return p;
         
     }
+    
+    // Design panel for Students tab
     private JPanel buildStudentsPanel() {
         JPanel s = new JPanel(new GridBagLayout());
         GridBagConstraints g = gbc();
@@ -220,6 +242,7 @@ public class CourseSelectionView extends JFrame {
         
     }
     
+    // Design panel for Courses tab
     private JPanel buildCoursesPanel() {
         JPanel c = new JPanel(new GridBagLayout());
         GridBagConstraints g = gbc();
@@ -229,13 +252,14 @@ public class CourseSelectionView extends JFrame {
         g.gridx=1; c.add(tfTitle, g);
         g.gridx=0; g.gridy=2; c.add(new JLabel("Credits:"), g);
         g.gridx=1; c.add(spCredits, g);
-        g.gridx=0; g.gridy=3; c.add(new JLabel("Level:"), g);
+        g.gridx=0; g.gridy=3; c.add(new JLabel("Programme:"), g);
         g.gridx=1; c.add(cbLevel, g);
         g.gridx=1; g.gridy=4; c.add(btnAddCourse, g);
         return c;
         
     }
     
+    // Deign panel for enroll / drop tab
     private JPanel buildEnrollPanel() {
         JPanel e = new JPanel(new GridBagLayout());
         GridBagConstraints g = gbc();
@@ -249,6 +273,7 @@ public class CourseSelectionView extends JFrame {
         
     }
     
+    // Design panel for List Courses tab
     private JPanel buildListPanel() {
         JPanel l = new JPanel(new BorderLayout(8, 8));
         JPanel top = new JPanel();  
@@ -260,11 +285,13 @@ public class CourseSelectionView extends JFrame {
         return l;  
     }
     
+    // Design panel for SearchCourses Tab
     private JPanel buildSearchPanel() {
         JPanel s = new JPanel(new BorderLayout(8, 8));
         JPanel top = new JPanel();  
         top.add(new JLabel("Course:"));
         top.add(tfQuery);
+        top.add(progFilter);
         top.add(btnSearch);
         s.add(top, BorderLayout.NORTH);
         s.add(new JScrollPane(tblResults), BorderLayout.CENTER);
