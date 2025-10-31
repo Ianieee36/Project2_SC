@@ -337,4 +337,5 @@ public class CourseSelectionView extends JFrame {
             default -> {}
         }        
     }
+    
 }

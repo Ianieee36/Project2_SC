@@ -28,6 +28,7 @@ public class CourseSelectionController implements CourseSelectionListener {
     private final CourseRepo courses;
     private final CourseSelectionView view;
     
+    
     public CourseSelectionController(EnrollmentService svc,
                                      StudentRepo students,
                                      CourseRepo courses,
@@ -78,32 +79,65 @@ public class CourseSelectionController implements CourseSelectionListener {
     
     @Override
     public void onEnroll(String studentId, String courseCode) {
-        try {
-            String sid = studentId == null ? "" : studentId.trim();
-            String code = courseCode == null ? "" : courseCode.trim();
+        
+        String sid = studentId == null ? "" : studentId.trim();
+        String code = courseCode == null ? "" : courseCode.trim();
             
-            List<String> errs = svc.validate(sid, code);
-            if(!errs.isEmpty()) {
-                view.showError(String.join("\n", errs));
-                return;
-            }
+        if(sid.isEmpty() || code.isEmpty()) {
+            view.showError("Student ID and Course Code are required.");
+            return;
+        }
+            
+        if(students.find(sid) == null) {
+            view.showError("No such student: " + sid);
+            return;
+        }
+            
+        if(courses.find(code) == null) {
+            view.showError("No such course: " + code);
+            return;
+        }
+            
+        try {
             svc.enroll(sid, code);
-            view.showInfo("Enrolled " + sid + " in " + code.toUpperCase());
-        } catch (Exception ex) {
+            view.showInfo("Enrolled " + sid + " in " + code);
+        } catch(IllegalArgumentException ex) {
             view.showError(ex.getMessage());
+        } catch(RuntimeException ex) {
+            view.showError("Unexpected error: " + ex.getMessage());
         }
     }
+        
     
     @Override
     public void onDrop(String studentId, String courseCode) {
-        try {
-            String sid = studentId == null ? "" : studentId.trim();
-            String code = courseCode == null ? "" : courseCode.trim();
+        
+        String sid = studentId == null ? "" : studentId.trim();
+        String code = courseCode == null ? "" : courseCode.trim();
+        
+        if(sid.isEmpty() || code.isEmpty()) {
+            view.showError("Student ID and Course Code are required.");
+            return;
+        }
+        
+        if(students.find(sid) == null) {
+            view.showError("No such student: " + sid);
+            return;
+        }
+        if(courses.find(code) == null) {
+            view.showError("No such course: " + code);
+            return;
+        }
+        
+        try{
             svc.drop(sid ,code);
             view.showInfo("Dropped " + sid + " from " + code.toUpperCase());
-        } catch (Exception ex) {
+        } catch(IllegalArgumentException ex) {
             view.showError(ex.getMessage());
+        } catch(RuntimeException ex) {
+            view.showError("Unexpected error: " + ex.getMessage());
         }
+                    
     }
     
     @Override
@@ -138,4 +172,5 @@ public class CourseSelectionController implements CourseSelectionListener {
             view.showError(ex.getMessage());
         }
     }
+    
  }

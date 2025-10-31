@@ -47,8 +47,9 @@ public class EnrollmentService {
         if(!errs.isEmpty()) return errs;
         
         if(enrollments.isEnrolled(sid, code)) {
-            errs.add("Already enrolled");
+            errs.add("Already enrolled in " + code);
             return errs;
+
         }
         
         int current = enrollments.listFor(sid).stream()
@@ -69,7 +70,7 @@ public class EnrollmentService {
     
     public void drop(String sid, String code) {
         if(!enrollments.isEnrolled(sid, code)) 
-            throw new IllegalArgumentException(String.join(", ", code));
+            throw new IllegalArgumentException(String.join(",", code));
         enrollments.drop(sid, code);
     }
     
