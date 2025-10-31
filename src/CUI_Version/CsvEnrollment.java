@@ -2,12 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package repo;
+package CUI_Version;
 
-import files.CourseFiles;
+import CUI_Version.CourseFiles;
 import model.Course;
 
 import java.util.List;
+import repo.EnrollmentRepo;
 
 /**
  *

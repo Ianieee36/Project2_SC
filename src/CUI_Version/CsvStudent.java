@@ -2,7 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package repo;
+package CUI_Version;
+
+import repo.StudentRepo;
 
 /**
  *
@@ -10,9 +12,9 @@ package repo;
  */
 public final class CsvStudent implements StudentRepo {
     
-    private final files.CourseFiles svc;
+    private final CUI_Version.CourseFiles svc;
     
-    public CsvStudent(files.CourseFiles svc) {
+    public CsvStudent(CUI_Version.CourseFiles svc) {
         this.svc = svc;
     }
     
