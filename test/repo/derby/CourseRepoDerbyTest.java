@@ -21,7 +21,7 @@ public class CourseRepoDerbyTest extends DerbyRepoTest {
         var repo = new repo.db.CourseRepoDerby();
         
         repo.add(new UndergraduateCourse("COMP101", "Intro to CS", 15));
-        repo.add(new PostgraduateCourse("COMP801", "Advance Topics", 15));
+        repo.add(new PostgraduateCourse("COMP801", "Advance Topics", 30));
         
         var ug = repo.find("COMP101");
         assertNotNull(ug);
