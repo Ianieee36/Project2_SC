@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package UI;
+package ui;
 
 /**
  *
@@ -14,5 +14,5 @@ public interface CourseSelectionListener {
     void onEnroll(String studentId, String courseCode);
     void onDrop(String studentId, String courseCode);
     void onListCourses(String studentId);
-    void onSearchCourses(String query);
+    void onSearchCourses(String query, String progFilter);
 }
