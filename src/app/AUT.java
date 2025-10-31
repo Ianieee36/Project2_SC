@@ -29,7 +29,6 @@ public class AUT {
         SwingUtilities.invokeLater(() -> {
             // GUI uses the aut_DB
             System.clearProperty("app.db.url");
-            
             Schema.ensure();
             
             StudentRepo sRepo = new StudentRepoDerby();
