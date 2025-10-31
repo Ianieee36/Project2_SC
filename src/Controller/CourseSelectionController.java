@@ -2,18 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Controller;
+package controller;
 
-import UI.CourseSelectionView;
-import UI.CourseSelectionListener;
+import ui.CourseSelectionView;
+import ui.CourseSelectionListener;
 
 import service.EnrollmentService;
 import repo.StudentRepo;
 import repo.CourseRepo;
 import model.Course;
 import model.Student;
+import model.PostgraduateCourse;
 
 import java.util.List;
+
 
 
 /**
@@ -99,7 +101,7 @@ public class CourseSelectionController implements CourseSelectionListener {
             String sid = studentId == null ? "" : studentId.trim();
             String code = courseCode == null ? "" : courseCode.trim();
             svc.drop(sid ,code);
-            view.showInfo("Dropper " + sid + " from " + code.toUpperCase());
+            view.showInfo("Dropped " + sid + " from " + code.toUpperCase());
         } catch (Exception ex) {
             view.showError(ex.getMessage());
         }
@@ -107,22 +109,33 @@ public class CourseSelectionController implements CourseSelectionListener {
     
     @Override
     public void onListCourses(String studentId) {
-        try {
-            String sid = studentId == null ? "" : studentId.trim();
+        String sid = studentId == null ? "" : studentId.trim();
+        if(sid.isEmpty()) {
+            view.showError("Student ID required");
+            return;
+        }
+        try{    
             List<Course> list = svc.list(sid);
             view.showStudentCourses(sid, list);
-        } catch(Exception ex) {
+        } catch(IllegalArgumentException ex) {
             view.showError(ex.getMessage());
+        } catch(Exception ex) {
+            view.showError("Not found " + ex.getMessage());
         }
     }
     
     @Override
-    public void onSearchCourses(String query) {
+    public void onSearchCourses(String query, String progFilter) {
         try {
-            String q = query == null ? "" : query.trim();
-            List<Course> list = courses.search(q);
-            view.showSearchResults(list);
-        } catch(Exception ex) {
+        List<Course> found = courses.search(query);
+        if (!"All".equalsIgnoreCase(progFilter)) {
+            found = found.stream()
+                    .filter(c -> ("PG".equalsIgnoreCase(progFilter) && c instanceof PostgraduateCourse)
+                              || ("UG".equalsIgnoreCase(progFilter) && !(c instanceof PostgraduateCourse)))
+                    .toList();
+            }
+            view.showSearchResults(found);
+        } catch (Exception ex) {
             view.showError(ex.getMessage());
         }
     }
